@@ -11,6 +11,24 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(express.static('public'))
 
+// app.delete("api/notes/:id", (req, res) => {
+//     const params = findById(req.params.id, notes);
+
+// db.query(params, (err, result) => {
+//     if (err) {
+//         res.statusMessage(400).json({error: err.message});
+//         return;
+//     } else {
+//         res.json({
+//             message: `deleted`,
+//             changes: result.affectedRows,
+//             id: req.params.id
+//         });
+//     }
+
+//   });
+// });
+
 // use api routes
 app.use('/api', apiRoutes);
 app.use('/', htmlRoutes);
