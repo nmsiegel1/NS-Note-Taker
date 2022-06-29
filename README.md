@@ -29,7 +29,15 @@ To install dependencies, run "npm i" or "npm install" in the command line
 
 ## Notes
 
-*
+* When you open the application, you are taken to the landing page that contains a link to the notes page
+* On the notes page, exsiting notes are displayed in a list on the left hand side
+* To write a new note, input the note title and body and then click on the save icon in the upper right corner
+* You are not allowed to submit a new note until all required fields are completed
+* All notes are saved in the db.json file
+* To view a previously written note, select the desired note from the list
+* To delete a note, click on the red trash icon
+* If you attempt to navigate to a page that does not exist, you will be directed to the landing page
+* All of this functionality is possible by using Express.js routes
 
 ## Application
 
