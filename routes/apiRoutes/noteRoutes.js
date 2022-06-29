@@ -1,3 +1,4 @@
+// requires
 const router = require("express").Router();
 const {
   filterByQuery,
@@ -10,14 +11,16 @@ const uuid = require("../../helpers/uuid");
 const path = require("path");
 const fs = require("fs");
 
+// GET all notes
 router.get("/notes", (req, res) => {
-  let results = notes;
+  let results = JSON.parse(fs.readFileSync("./db/db.json", "utf8"));
   if (req.query) {
     results = filterByQuery(req.query, results);
   }
   res.json(results);
 });
 
+// GET one note
 router.get("/notes/:id", (req, res) => {
   const result = findById(req.params.id, notes);
   if (result) {
@@ -27,58 +30,23 @@ router.get("/notes/:id", (req, res) => {
   }
 });
 
-router.delete("/notes/:id", (req, res) => {
+// DELETE a not
+router.delete("/notes/:id", async (req, res) => {
   const deletedNote = findById(req.params.id, notes);
-  let newList
   if (deletedNote) {
-    let originalList = notes;
-    newList = originalList.filter((note) => note.id !== req.params.id);
-    console.log(newList);
+    let originalList = JSON.parse(fs.readFileSync("./db/db.json", "utf8"));
+    const filteredNote = await originalList.filter(
+      (note) => note.id !== req.params.id
+    );
 
-    fs.writeFileSync("./db/db.json", JSON.stringify(newList));
+    fs.writeFileSync("./db/db.json", JSON.stringify(filteredNote));
+    const newList = JSON.parse(fs.readFileSync("./db/db.json", "utf8"));
 
-    // let results = notes;
-    //   results = filterByQuery(req.query, results);
-    // res.json(results);
+    return res.json(newList);
   }
-  console.log(">>", newList)
-  return res.json(newList)
-
 });
 
-// router.delete("/notes/:id", (req, res) => {
-//   const id = findById(req.params.id, notes);
-//   if (id) {
-//     const oldNotes = notes;
-//     const deletedList = oldNotes.filter((note) => note.id !== req.params.id);
-//     console.log(deletedList);
-
-//     fs.writeFileSync(
-//       path.join(__dirname, "../../db/db.json"),
-//       JSON.stringify(deletedList)
-//     );
-//     res.json(deletedList);
-//   }
-// });
-
-// router.delete("api/notes/:id", (req, res) => {
-//     const params = findById(req.params.id, notes);
-
-// db.query(params, (err, result) => {
-//     if (err) {
-//         res.statusMessage(400).json({error: err.message});
-//         return;
-//     } else {
-//         res.json({
-//             message: `deleted`,
-//             changes: result.affectedRows,
-//             id: req.params.id
-//         });
-//     }
-
-//   });
-// });
-
+// POST new notes
 router.post("/notes", (req, res) => {
   req.body.id = uuid();
   if (!validateNote(req.body)) {
